@@ -9,17 +9,23 @@ async function cekPIN() {
     .eq('pin', pin)
     .single()
 
-  if (siswa) {
-    document.getElementById('profile').style.display = 'block'
-    document.getElementById('nama').innerText = 'Nama: ' + siswa.nama
-    document.getElementById('ttl').innerText = 'Tempat/Tgl Lahir: ' + siswa.tempat + ', ' + siswa.ttl
-    document.getElementById('nis').innerText = 'NIS: ' + siswa.nis
-    document.getElementById('nisn').innerText = 'NISN: ' + siswa.nisn
-
-    loadNilai(siswa.id)
-  } else {
-    alert('PIN salah atau tidak ditemukan.')
+  if (error || !siswa) {
+    alert('PIN salah atau tidak ditemukan.');
+    return;
   }
+
+  document.getElementById('profile').style.display = 'block'
+  document.getElementById('nama').innerText = 'Nama: ' + siswa.nama
+  document.getElementById('ttl').innerText = 'Tempat/Tgl Lahir: ' + siswa.tempat + ', ' + siswa.ttl
+  document.getElementById('nis').innerText = 'NIS: ' + siswa.nis
+  document.getElementById('nisn').innerText = 'NISN: ' + siswa.nisn
+
+  // Optional: Tampilkan foto profil
+  if (document.getElementById('fotoProfil')) {
+    document.getElementById('fotoProfil').src = siswa.foto || 'default.png';
+  }
+
+  loadNilai(siswa.id)
 }
 
 async function loadNilai(siswa_id) {
@@ -30,6 +36,18 @@ async function loadNilai(siswa_id) {
 
   const tbody = document.querySelector('#tabelNilai tbody')
   tbody.innerHTML = ''
+
+  if (error || !data) {
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center">Gagal memuat nilai.</td></tr>';
+    return;
+  }
+
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center">Belum ada nilai.</td></tr>';
+    document.getElementById('totalNilai').innerText = 0;
+    document.getElementById('rataNilai').innerText = 0;
+    return;
+  }
 
   let total = 0
   data.forEach((n, idx) => {
