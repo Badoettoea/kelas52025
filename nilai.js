@@ -12,9 +12,9 @@ async function cekPIN() {
   if (siswa) {
     document.getElementById('profile').style.display = 'block'
     document.getElementById('nama').innerText = 'Nama: ' + siswa.nama
-    document.getElementById('ttl').innerText = 'TTL: ' + siswa.tempat_lahir + ', ' + siswa.tanggal_lahir
-    document.getElementById('nis').innerText = 'NIS: ' + siswa.NIS
-    document.getElementById('nisn').innerText = 'NISN: ' + siswa.NISN
+    document.getElementById('ttl').innerText = 'Tempat/Tgl Lahir: ' + siswa.tempat + ', ' + siswa.ttl
+    document.getElementById('nis').innerText = 'NIS: ' + siswa.nis
+    document.getElementById('nisn').innerText = 'NISN: ' + siswa.nisn
 
     loadNilai(siswa.id)
   } else {
