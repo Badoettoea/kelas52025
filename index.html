@@ -2,27 +2,23 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Galeri Kelas 5</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/styles/style.css">
 </head>
 <body>
+  <header>
+    <h1>Galeri Kelas 5</h1>
+    <div>
+      <button id="btnLogout">Keluar</button>
+      <button id="btnNilai">Lihat Nilai</button>
+    </div>
+  </header>
 
-<header>
-  <h2>Galeri Kelas 5</h2>
-  <div>
-    <button onclick="logout()">Keluar</button>
-    <button onclick="gotoNilai()">Lihat Nilai</button>
-  </div>
-</header>
+  <div class="grid" id="gridSiswa"></div>
 
-<div class="grid" id="gridSiswa">
-  <!-- Dynamic Content Here -->
-</div>
+  <input type="file" id="filePicker" accept="image/*" style="display:none">
 
-<input type="file" id="filePicker" style="display:none" accept="image/*">
-
-<script type="module" src="script.js"></script>
-
+  <script type="module" src="/scripts/script.js"></script>
 </body>
 </html>
