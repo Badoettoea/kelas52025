@@ -47,6 +47,7 @@
       font-size: 16px;
       cursor: pointer;
       transition: 0.3s;
+      margin-bottom: 10px;
     }
 
     button:hover {
@@ -57,6 +58,14 @@
       display: none;
       text-align: center;
       margin-top: 20px;
+      opacity: 0;
+      transform: scale(0.95);
+      transition: all 0.5s ease;
+    }
+
+    .profile.show {
+      opacity: 1;
+      transform: scale(1);
     }
 
     .profile img {
@@ -89,6 +98,12 @@
       font-weight: 600;
     }
 
+    #loading {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+    }
+
     @media(max-width: 600px) {
       .container {
         padding: 20px;
@@ -103,6 +118,11 @@
 
   <input type="text" id="pin" placeholder="Masukkan PIN Anda">
   <button onclick="cekPIN()">Lihat Nilai</button>
+  <button id="btnKembali">Kembali ke Galeri</button>
+
+  <div id="loading">
+    <p>Loading...</p>
+  </div>
 
   <div id="profile" class="profile">
     <img id="fotoProfil" src="default.png" alt="Foto Profil">
