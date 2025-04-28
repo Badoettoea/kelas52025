@@ -14,7 +14,7 @@ async function loadSiswa() {
     card.innerHTML = `
       <h3>${siswa.nama}</h3>
       <div class="overlay"></div>
-      <img src="${siswa.foto_url}" alt="Foto ${siswa.nama}" loading="lazy">
+      <img src="${siswa.foto}" alt="Foto ${siswa.nama}" loading="lazy">
       <button onclick="openFilePicker(${siswa.id})">Ganti Foto</button>
     `
     grid.appendChild(card)
@@ -34,7 +34,7 @@ document.getElementById('filePicker').addEventListener('change', async (e) => {
 
   const { data, error: uploadError } = await supabase
     .storage
-    .from('foto-siswa')  // GANTI dengan nama storage bucket kamu
+    .from('foto-siswa')
     .upload(filePath, file, {
       cacheControl: '3600',
       upsert: true
@@ -52,7 +52,7 @@ document.getElementById('filePicker').addEventListener('change', async (e) => {
 
   await supabase
     .from('siswa')
-    .update({ foto_url: publicUrl.publicUrl })
+    .update({ foto: publicUrl.publicUrl })
     .eq('id', selectedSiswaId);
 
   alert('Foto berhasil diganti!');
@@ -61,7 +61,6 @@ document.getElementById('filePicker').addEventListener('change', async (e) => {
 
 function logout() {
   alert('Logout berhasil.');
-  // Tambahkan redirect kalau perlu
 }
 
 function gotoNilai() {
