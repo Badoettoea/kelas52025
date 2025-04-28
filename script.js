@@ -14,7 +14,7 @@ async function loadSiswa() {
     card.innerHTML = `
       <h3>${siswa.nama}</h3>
       <div class="overlay"></div>
-      <img src="${siswa.foto}" alt="Foto ${siswa.nama}" loading="lazy">
+      <img src="${siswa.foto || 'default.png'}" alt="Foto ${siswa.nama}" loading="lazy">
       <button onclick="openFilePicker(${siswa.id})">Ganti Foto</button>
     `
     grid.appendChild(card)
@@ -32,7 +32,7 @@ document.getElementById('filePicker').addEventListener('change', async (e) => {
 
   const filePath = `siswa/${selectedSiswaId}_${Date.now()}.jpg`;
 
-  const { data, error: uploadError } = await supabase
+  const { data: uploadData, error: uploadError } = await supabase
     .storage
     .from('foto-siswa')
     .upload(filePath, file, {
@@ -45,26 +45,40 @@ document.getElementById('filePicker').addEventListener('change', async (e) => {
     return;
   }
 
-  const { data: publicUrl } = supabase
+  const { data: urlData, error: urlError } = supabase
     .storage
     .from('foto-siswa')
     .getPublicUrl(filePath);
 
+  if (urlError) {
+    console.error('Get Public URL Error:', urlError);
+    return;
+  }
+
   await supabase
     .from('siswa')
-    .update({ foto: publicUrl.publicUrl })
+    .update({ foto: urlData.publicUrl })
     .eq('id', selectedSiswaId);
 
   alert('Foto berhasil diganti!');
   loadSiswa();  // Refresh grid
 })
 
-function logout() {
-  alert('Logout berhasil.');
+// Tombol keluar
+const btnKeluar = document.getElementById('btnKeluar');
+if (btnKeluar) {
+  btnKeluar.addEventListener('click', () => {
+    alert('Keluar...');
+    window.location.reload();
+  });
 }
 
-function gotoNilai() {
-  window.location.href = 'nilai.html';
+// Tombol lihat nilai
+const btnLihatNilai = document.getElementById('btnLihatNilai');
+if (btnLihatNilai) {
+  btnLihatNilai.addEventListener('click', () => {
+    window.location.href = 'nilai.html';
+  });
 }
 
 loadSiswa()
