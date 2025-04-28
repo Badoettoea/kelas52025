@@ -1,84 +1,47 @@
-// script.js
-import { supabase } from './supabaseClient.js'
+import { supabase } from './supabaseClient.js';
+import { logout } from './auth.js';
 
-let selectedSiswaId = null;
+// Inisialisasi
+document.addEventListener('DOMContentLoaded', () => {
+  initGaleri();
+  setupEventListeners();
+});
 
-async function loadSiswa() {
-  const { data, error } = await supabase.from('siswa').select('*')
-  const grid = document.getElementById('gridSiswa')
-  grid.innerHTML = ''
+async function initGaleri() {
+  try {
+    const { data, error } = await supabase
+      .from('siswa')
+      .select('*')
+      .order('nama', { ascending: true });
 
-  data.forEach(siswa => {
-    const card = document.createElement('div')
-    card.className = 'card'
-    card.innerHTML = `
+    if (error) throw error;
+
+    renderSiswaGrid(data);
+  } catch (error) {
+    console.error('Error loading siswa:', error);
+    alert('Gagal memuat data siswa');
+  }
+}
+
+function renderSiswaGrid(siswaData) {
+  const grid = document.getElementById('gridSiswa');
+  grid.innerHTML = siswaData.map(siswa => `
+    <div class="card">
+      <img src="${siswa.foto || 'default.png'}" alt="${siswa.nama}" loading="lazy">
       <h3>${siswa.nama}</h3>
-      <div class="overlay"></div>
-      <img src="${siswa.foto || 'default.png'}" alt="Foto ${siswa.nama}" loading="lazy">
-      <button onclick="openFilePicker(${siswa.id})">Ganti Foto</button>
-    `
-    grid.appendChild(card)
-  })
+      <button data-id="${siswa.id}" class="btn-ganti-foto">Ganti Foto</button>
+    </div>
+  `).join('');
 }
 
-window.openFilePicker = function(id) {
-  selectedSiswaId = id;
-  document.getElementById('filePicker').click();
-}
-
-document.getElementById('filePicker').addEventListener('change', async (e) => {
-  const file = e.target.files[0];
-  if (!file || !selectedSiswaId) return;
-
-  const filePath = `siswa/${selectedSiswaId}_${Date.now()}.jpg`;
-
-  const { data: uploadData, error: uploadError } = await supabase
-    .storage
-    .from('foto-siswa')
-    .upload(filePath, file, {
-      cacheControl: '3600',
-      upsert: true
-    });
-
-  if (uploadError) {
-    console.error('Upload Error:', uploadError);
-    return;
-  }
-
-  const { data: urlData, error: urlError } = supabase
-    .storage
-    .from('foto-siswa')
-    .getPublicUrl(filePath);
-
-  if (urlError) {
-    console.error('Get Public URL Error:', urlError);
-    return;
-  }
-
-  await supabase
-    .from('siswa')
-    .update({ foto: urlData.publicUrl })
-    .eq('id', selectedSiswaId);
-
-  alert('Foto berhasil diganti!');
-  loadSiswa();  // Refresh grid
-})
-
-// Tombol keluar
-const btnKeluar = document.getElementById('btnKeluar');
-if (btnKeluar) {
-  btnKeluar.addEventListener('click', () => {
-    alert('Keluar...');
-    window.location.reload();
+function setupEventListeners() {
+  // Delegasi event untuk tombol ganti foto
+  document.getElementById('gridSiswa').addEventListener('click', (e) => {
+    if (e.target.classList.contains('btn-ganti-foto')) {
+      openFilePicker(e.target.dataset.id);
+    }
   });
-}
 
-// Tombol lihat nilai
-const btnLihatNilai = document.getElementById('btnLihatNilai');
-if (btnLihatNilai) {
-  btnLihatNilai.addEventListener('click', () => {
-    window.location.href = 'nilai.html';
-  });
+  // Tombol logout
+  document.getElementById('btnLogout').addEventListener('click', logout);
 }
-
-loadSiswa()
