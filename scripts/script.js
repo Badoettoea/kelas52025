@@ -1,5 +1,10 @@
-import { supabase } from './supabaseClient.js';
 import { logout } from './auth.js';
+import { gotoNilai } from './navigation.js';
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Setup button event listeners
+  document.getElementById('btnLogout')?.addEventListener('click', logout);
+  document.getElementById('btnNilai')?.addEventListener('click', gotoNilai);
 
 // Inisialisasi
 document.addEventListener('DOMContentLoaded', () => {
